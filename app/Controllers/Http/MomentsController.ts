@@ -12,7 +12,7 @@ export default class MomentsController {
   }
 
   public async index({ response }: HttpContextContract) {
-    const moments = await Moment.all()
+    const moments = await Moment.query().preload('comments')
 
     response.status(200)
 
@@ -45,6 +45,8 @@ export default class MomentsController {
   public async show({ params, response }: HttpContextContract) {
     const id = params.id
     const moment = await Moment.find(id)
+
+    await moment?.load('comments')
 
     if (!moment) {
       response.status(404)
